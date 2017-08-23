@@ -6,8 +6,5 @@ http.createServer((req, res) => {
     console.log(`Handling request from ${pid}`);
     res.end(`Hello from ${pid}\n`);
 }).listen(3000, () => {
-    setTimeout(() => {
-        throw new Error('Hum.. sujou!..');    
-    }, Math.ceil(Math.random() * 10) * 1000);
     console.log(`Started ${pid}**`);
 })
