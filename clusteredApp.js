@@ -9,7 +9,7 @@ if (cluster.isMaster) {
     }
 
     cluster.on('exit', (worker, code) => {
-        if (code !== 0 && !worker.suicide) {
+        if (code !== 0 && !worker.exitedAfterDisconnect) {
             console.log('Worker crashed. Starting a new worker');
             cluster.fork();
         }
@@ -27,7 +27,7 @@ if (cluster.isMaster) {
             worker.disconnect();
             
             worker.on('exit', () => {
-                if (!worker.suicide) return;
+                if (!worker.exitedAfterDisconnect) return;
                 
                 const newWorker = cluster.fork();
                 newWorker.on('listening', () => {
