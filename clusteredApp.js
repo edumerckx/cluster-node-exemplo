@@ -1,9 +1,17 @@
 const cluster = require('cluster');
 const os = require('os');
 
+const numberOfUsersInDB = () => {
+    this.count = this.count || 3;
+    this.count = this.count * Math.round(Math.random() * 5) + 1;
+    return this.count;
+}
+
 if (cluster.isMaster) {
     const cpus = os.cpus().length;
+    
     console.log(`Clustering to ${cpus} CPUs`);
+    
     for (let i = 0; i < cpus; i++) {
         cluster.fork();
     }
@@ -15,9 +23,15 @@ if (cluster.isMaster) {
         }
     });
 
-    Object.values(cluster.workers).forEach(worker => {
-        worker.send(`Hello Worker ${worker.id}`);
-    })
+    const updateWorkers = () => {
+        const usersCount = numberOfUsersInDB();
+        Object.values(cluster.workers).forEach(worker => {
+            worker.send({ usersCount });
+        });
+    };
+      
+    updateWorkers();
+    setInterval(updateWorkers, 10000);
 
     process.on('SIGTERM', () => {
         const workers = Object.keys(cluster.workers);
