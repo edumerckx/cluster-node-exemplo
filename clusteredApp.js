@@ -15,6 +15,10 @@ if (cluster.isMaster) {
         }
     });
 
+    Object.values(cluster.workers).forEach(worker => {
+        worker.send(`Hello Worker ${worker.id}`);
+    })
+
     process.on('SIGTERM', () => {
         const workers = Object.keys(cluster.workers);
 
